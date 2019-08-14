@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Secret Message</title>
+
+	<script src="https://rawcdn.githack.com/ricmoo/aes-js/e27b99df/index.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/emn178/js-sha256/build/sha256.min.js"></script>
+
+	<style>
+	
+		* {
+		
+			outline: none;
+
+			font-family: 'Arial', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+		}
+
+		html, body {
+
+			margin: 0;
+			padding: 20px;
+
+		}
+
+		input, button {
+
+			border: 1px solid black;
+			border-radius: 3px;
+
+			padding: 10px 17px;
+
+			font-weight: 700;
+
+			background: transparent;
+
+			transition: 0.2s all;
+
+		}
+
+		button:hover {
+
+			color: white;
+
+			background: black;
+
+			cursor: pointer;
+
+		}
+
+	</style>
+
+</head>
+<body>
+	
+	<h1>You've stumbled upon a secret message.</h1>
+
+	<p>Hint: <%- hint || "None" %></p>
+
+	<div id="keys">
+
+		<% for (let i = 0; i < keys; i++) { %>
+
+			<input type="text" placeholder="Key <%- i + 1 %>">
+
+		<% } %>
+
+	</div>
+
+	<br>
+
+	<p id="output"></p>
+
+	<script>
+	
+		/**
+
+			For developers and prospective hackers;
+
+				- This page uses AES-256 to store its values, therefore it's impossible to break unless you use a bruteforcing tool.
+				- The AES key is `${key1.toLowerCase()}|${key2.toLowerCase()}|...`
+
+		**/
+
+		// HARDCODED BY KITARG
+		const message = <%- message %>;
+		
+		document.addEventListener("keyup", async () => {
+
+			document.getElementById("output").innerHTML = "";
+
+			let key = [...document.getElementById("keys").children].map(_ => _.value.toLowerCase());
+
+			let cipher = new aesjs.ModeOfOperation.ctr(sha256.digest(key.join("|")), new aesjs.Counter(5));
+
+			try {
+
+				document.getElementById("output").innerHTML += `<h2>Message</h2><p>${aesjs.utils.utf8.fromBytes(cipher.decrypt(message))}</p>`;
+
+			} catch (e) {
+
+				document.getElementById("output").innerHTML += `Error;<br><pre><code>${e}</code></pre>`;
+
+			}
+
+		});
+
+	</script>
+
+</body>
+</html>

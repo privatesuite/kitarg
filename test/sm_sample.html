@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Secret Message</title>
+
+	<script src="https://rawcdn.githack.com/ricmoo/aes-js/e27b99df/index.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/emn178/js-sha256/build/sha256.min.js"></script>
+
+	<style>
+	
+		* {
+		
+			outline: none;
+
+			font-family: 'Arial', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+		}
+
+		html, body {
+
+			margin: 0;
+			padding: 20px;
+
+		}
+
+		input, button {
+
+			border: 1px solid black;
+			border-radius: 3px;
+
+			padding: 10px 17px;
+
+			font-weight: 700;
+
+			background: transparent;
+
+			transition: 0.2s all;
+
+		}
+
+		button:hover {
+
+			color: white;
+
+			background: black;
+
+			cursor: pointer;
+
+		}
+
+	</style>
+
+</head>
+<body>
+	
+	<h1>You've stumbled upon a secret message.</h1>
+
+	<p>Hint: None</p>
+
+	<div id="keys">
+
+		
+
+			<input type="text" placeholder="Key 1">
+
+		
+
+			<input type="text" placeholder="Key 2">
+
+		
+
+	</div>
+
+	<br>
+
+	<p id="output"></p>
+
+	<script>
+	
+		/**
+
+			For developers and prospective hackers;
+
+				- This page uses AES-256 to store its values, therefore it's impossible to break unless you use a bruteforcing tool.
+				- The AES key is `${key1.toLowerCase()}|${key2.toLowerCase()}|...`
+
+		**/
+
+		// HARDCODED BY KITARG
+		const message = [137,82,2,199,68,69,173,139,255,46,50,33,172,55,58,57,67,127,118,137,25,131,77,220,85,32,93,180,89,154,203,164,132,158,252,249,31,189,248,168,177,28,202,136,148,34,32,53,64,254,202,80,88,6,19,34,106,95,66,168,184,171,81,45,76,249,172,116,123,169,188,171,234,231,79,203,28,229,204,208,139,171,116,156,141,5,83,203,80,221,32,167,236,249,51,60,173,88,210,124,0,248,18,218,177,70,123,229,164,245,54,34,228,61,112,6,203,237,40,243,209,117,238,49,175,212,230,71,12,74,83,166,225,66,165,6,20,255,66,43,123,25,67,151,88,48,75,87,206,144,237,223,113,108,127,121,171,177,181,241,3,209,194,218,184,186,245,105,105,118,87,112,175,191,45,0,220,72,51,156,0,241,141,173,81,253,142,200,45,238,167,24,250,210,126,10,102,102,29,41,27,187,245,149,123,176,66,76,43,173,203,168,42,4,192,105,157,143,11,81,110,44,73,250,191,106,35,200,185,177,160,148,185,16,40,191,238,149,162,248,43,15,114,200,73,96,226,63,9];
+		
+		document.addEventListener("keyup", async () => {
+
+			document.getElementById("output").innerHTML = "";
+
+			let key = [...document.getElementById("keys").children].map(_ => _.value.toLowerCase());
+
+			let cipher = new aesjs.ModeOfOperation.ctr(sha256.digest(key.join("|")), new aesjs.Counter(5));
+
+			try {
+
+				document.getElementById("output").innerHTML += `<h2>Message</h2><p>${aesjs.utils.utf8.fromBytes(cipher.decrypt(message))}</p>`;
+
+			} catch (e) {
+
+				document.getElementById("output").innerHTML += `Error;<br><pre><code>${e}</code></pre>`;
+
+			}
+
+		});
+
+	</script>
+
+</body>
+</html>
